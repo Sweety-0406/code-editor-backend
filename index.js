@@ -9,9 +9,9 @@ const server = createServer(app);
 const io = new Server(server, {
     cors: {
         origin: '*', 
-        methods: ['GET', 'POST'], 
-        allowedHeaders: ['Content-Type'], 
-        credentials: true
+        // methods: ['GET', 'POST'], 
+        // allowedHeaders: ['Content-Type'], 
+        // credentials: true
     },
     connectionStateRecovery: {}
 });
@@ -19,9 +19,9 @@ const io = new Server(server, {
 
 app.use(cors({
     origin: '*',
-    methods: ['GET', 'POST'], 
-    allowedHeaders: ['Content-Type'], 
-    credentials: true
+    // methods: ['GET', 'POST'], 
+    // allowedHeaders: ['Content-Type'], 
+    // credentials: true
 }));
 
 app.get('/', (req, res) => {
