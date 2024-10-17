@@ -2,34 +2,45 @@ const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const connectDB = require("./db/index")
+
+dotenv.config({
+    path:'./.env'
+})
+
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: '*', 
-        // methods: ['GET', 'POST'], 
-        // allowedHeaders: ['Content-Type'], 
-        // credentials: true
+        origin: process.env.FRONTEND_URL, 
+        methods: ['GET', 'POST'], 
+        allowedHeaders: ['Content-Type'], 
+        credentials: true
     },
     connectionStateRecovery: {}
 });
 
-
+app.use(express.json())
 app.use(cors({
-    origin: '*',
-    // methods: ['GET', 'POST'], 
-    // allowedHeaders: ['Content-Type'], 
-    // credentials: true
+    origin: process.env.FRONTEND_URL,
+    methods: ['GET', 'POST'], 
+    allowedHeaders: ['Content-Type'], 
+    credentials: true
 }));
 
 app.get('/', (req, res) => {
    res.send("hii");
 });
 
-const groupMembers = {};
 
+//router
+const  userRouter = require('./routes/user.routes.js');
+app.use("/api/v1/users",userRouter)
+
+
+const groupMembers = {};
 io.on('connection', async (socket) => {
     socket.on('join-chat',(groupId,username,userId, color)=>{
         socket.join(groupId);
@@ -63,10 +74,16 @@ io.on('connection', async (socket) => {
     })
     
     
-    socket.on('chat-message', ( {groupId, msg, username}) => {
+    socket.on('chat-message', ( {groupId, msg, username, time}) => {
         console.log(`Message to room ${groupId} by ${username}: ${msg}`);
-        io.to(groupId).emit('chat message', {msg, username});
+        io.to(groupId).emit('chat message', {msg, username, time});
     });
+
+    //broadcast image of the board to all the users with same groupId
+    socket.on("board",(canvasImage, groupId, userId)=>{
+        console.log(`Image to room ${groupId} : ${canvasImage}`);
+        socket.broadcast.to(groupId).emit('boardData', { canvasImage });
+    })
 
     app.get('/group-members/:groupId', (req, res) => {
         const { groupId } = req.params;
@@ -80,8 +97,13 @@ io.on('connection', async (socket) => {
  
 });
 
-server.listen(3000, () => {
-  console.log('server running at http://localhost:3000');
-});
+connectDB().then(()=>{
+    server.listen(3000, () => {
+      console.log('server running at http://localhost:3000');
+    });
+})
+.catch((err)=>{
+    console.log(err);
+})
 
 

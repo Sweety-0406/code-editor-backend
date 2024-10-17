@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon && node index.js"
+    "dev": "nodemon node src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "firebase": "^10.14.1",
+    "mongoose": "^8.6.3",
+    "next-auth": "^4.24.8",
     "nodemon": "^3.1.4",
     "socket.io": "^4.7.5"
   }
