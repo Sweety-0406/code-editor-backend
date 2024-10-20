@@ -15,17 +15,17 @@ const userSchema = new Schema({
         required:true,
         lowercase:true,
         trim:true,
-        index:true
+        // index:true
     },
     groupId:{
         type:String,
         required:true,
         trim:true,
-        index:true
+        // index:true
     },
 },{timestamps:true})
 
-
+userSchema.index({ groupId: 1, username: 1 }, { unique: true });
 
 const User = mongoose.model("User",userSchema)
 module.exports = {User}

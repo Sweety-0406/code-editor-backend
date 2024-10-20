@@ -87,6 +87,7 @@ io.on('connection', async (socket) => {
 
     app.get('/group-members/:groupId', (req, res) => {
         const { groupId } = req.params;
+        console.log("groupMembers" + groupMembers[groupId])
         if (groupMembers[groupId]) {
             res.json(Array.from(groupMembers[groupId]));
         } else {
